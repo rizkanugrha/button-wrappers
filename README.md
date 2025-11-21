@@ -34,19 +34,31 @@ Since this is a custom utility module, follow these steps:
 import { sendButtons, sendInteractiveMessage } from './src/utils/interactive/index.js';
 // 'sock' refers to your main Baileys socket connection
 ```
+### 2. Old Buttons (sendButtons)
 
-### 2. Basic Buttons (sendButtons)
-Use sendButtons for standard scenarios like Quick Replies, URL buttons, or Copy Code buttons. The library automatically handles the JSON serialization for buttonParamsJson.
+```javascript
+await sendButtons(sock, jid, {
+            text: 'Coba beton',
+            footer: 'anu',
+            buttons: [
+                { id: `${prefix}menu`, text: 'Menu' },
+                { id: `${prefix}infoserver`, text: 'Info Server' }
+            ]
+        });
+```
+
+### 3. Example use of several types of buttons (InteractiveMessage)
+Use sendInteractiveMessage for scenarios like Quick Replies, URL buttons, or Copy Code buttons. The library automatically handles the JSON serialization for buttonParamsJson.
 
 ```javascript
 const jid = '1234567890@s.whatsapp.net';
 
 try {
-    await sendButtons(sock, jid, {
+    await sendInteractiveMessage(sock, jid, {
         title: 'Account Verification',
         text: 'Please select an option to proceed with your verification.',
         footer: 'Security System',
-        buttons: [
+        interactiveButtons: [
             // 1. Standard Quick Reply (Legacy format supported)
             { id: 'verify_now', text: 'Verify Now' },
 
@@ -75,14 +87,14 @@ try {
 }
 ```
 
-### 3. List Messages (single_select)
+### 4. List Messages (single_select)
 To send a "List Message" (Radio button menu), you must use the single_select type.
 
 ```javascript
-await sendButtons(sock, jid, {
+await sendInteractiveMessage(sock, jid, {
     text: 'Please select a product category',
     footer: 'Catalog',
-    buttons: [
+    interactiveButtons: [
         {
             name: 'single_select',
             buttonParamsJson: JSON.stringify({
@@ -109,7 +121,23 @@ await sendButtons(sock, jid, {
 });
 ```
 
-### 4. Advanced Payload (sendInteractiveMessage)
+### 5. Send Locations
+
+```javascript
+await sendInteractiveMessage(sock, jid, {
+  text: 'Silakan bagikan lokasi Anda',
+  interactiveButtons: [
+    { 
+      name: 'send_location', 
+      buttonParamsJson: JSON.stringify({ 
+        display_text: 'Bagikan Lokasi' 
+      }) 
+    }
+  ]
+});
+```
+
+### 6. Advanced Payload 
 For full control over the message structure (headers, detailed body, raw native flow), use the lower-level sendInteractiveMessage function.
 
 ```javascript
